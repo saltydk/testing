@@ -11,7 +11,7 @@ jobs:
       - name: Install Dependencies
         run: curl -s https://raw.githubusercontent.com/Cloudbox/cb/develop/cb_install.sh | sudo -H bash; cd /srv/git/cloudbox
  
-      - name: Import default configuration
+      - name: Chown /srv/git
         run: sudo chown -R runner:runner /srv/git
  
       - name: Import default configuration
