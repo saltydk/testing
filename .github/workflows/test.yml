@@ -10,7 +10,10 @@ jobs:
     steps:
       - name: Install Dependencies
         run: curl -s https://raw.githubusercontent.com/Cloudbox/cb/develop/cb_install.sh | sudo -H bash; cd /srv/git/cloudbox
-        
+ 
+      - name: Import default configuration
+        run: sudo chown -R runner:runner /srv/git
+ 
       - name: Import default configuration
         run: cd /srv/git/cloudbox && for i in defaults/*; do cp -n $i "$(basename "${i%.*}")"; done
 
