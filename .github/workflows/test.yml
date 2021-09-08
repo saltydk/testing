@@ -25,3 +25,6 @@ jobs:
 
       - name: Install Cloudbox
         run: cd /srv/git/cloudbox && sudo ansible-playbook cloudbox.yml --tags "cloudbox,emby,netdata,sabnzbd" --skip-tags "settings" --extra-vars '{"continuous_integration":true}'
+        
+      - name: Test cb
+        run: sb install settings
