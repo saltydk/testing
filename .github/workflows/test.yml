@@ -24,6 +24,9 @@ jobs:
       - name: Change default configuration user
         run: cd /srv/git/cloudbox && sed -i 's/seed/runner/g' accounts.yml
 
+      - name: Change default configuration user
+        run: cd /srv/git/cloudbox && echo 'stdout_callback = actionable' >> ansible.cfg
+
       - name: Syntax Check
         run: cd /srv/git/cloudbox && sudo ansible-playbook cloudbox.yml --syntax-check
 
