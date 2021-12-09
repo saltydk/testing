@@ -9,29 +9,23 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-18.04, ubuntu-20.04]
+        os: [ubuntu-20.04]
       fail-fast: false
     steps:
       - name: Install Dependencies
-        run: curl -s https://raw.githubusercontent.com/Cloudbox/cb/develop/cb_install.sh | sudo -H bash; cd /srv/git/cloudbox
- 
+        run: curl https://raw.githubusercontent.com/saltyorg/sb/master/sb_install.sh --output sb_install.sh && sudo bash sb_install.sh -v
+
       - name: Chown /srv/git
         run: sudo chown -R runner:runner /srv/git
- 
-      - name: Import default configuration
-        run: cd /srv/git/cloudbox && for i in defaults/*; do cp -n $i "$(basename "${i%.*}")"; done
 
-      - name: Change default configuration user
-        run: cd /srv/git/cloudbox && sed -i 's/seed/runner/g' accounts.yml
+      - name: Edit accounts.yml
+        run: cd /srv/git/saltbox && sed -i 's/seed/runner/g' accounts.yml
 
-      - name: Change default configuration user
-        run: cd /srv/git/cloudbox && echo 'stdout_callback = actionable' >> ansible.cfg
-
-      - name: Change default configuration user
-        run: cd /srv/git/cloudbox && sed -i '/callback_whitelist/d' ansible.cfg
+      - name: Create, chown and chmod /tmp/ansible
+        run: sudo mkdir /tmp/ansible && sudo chown -R runner:runner /tmp/ansible && chmod 0777 /tmp/ansible
 
       - name: Syntax Check
-        run: cd /srv/git/cloudbox && sudo ansible-playbook cloudbox.yml --syntax-check
+        run: cd /srv/git/saltbox && sudo ansible-playbook saltbox.yml --syntax-check
 
-      - name: Install Cloudbox
-        run: cb install cloudbox,emby,netdata,sabnzbd -e continuous_integration=true
+      - name: Install Saltbox
+        run: cd /srv/git/saltbox && sudo ansible-playbook saltbox.yml --tags "core" --skip-tags "sanity_check,settings,kernel,hetzner,shell,rclone,system,motd,nvidia,mounts,scripts" --extra-vars '{"continuous_integration":true}' -v
