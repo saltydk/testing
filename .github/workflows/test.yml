@@ -9,7 +9,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-20.04]
+        os: [ubuntu-20.04, ubuntu-latest]
+        roles: [radarrx, sonarrx]
       fail-fast: false
     steps:
       - name: Install Dependencies
@@ -29,3 +30,6 @@ jobs:
 
       - name: Install Saltbox
         run: cd /srv/git/saltbox && sudo ansible-playbook saltbox.yml --tags "core" --skip-tags "sanity_check,settings,kernel,hetzner,shell,rclone,system,motd,nvidia,mounts,scripts" --extra-vars '{"continuous_integration":true}' -v
+        
+      - name: Install Community Role
+        run: sb install "cm-${{ matrix.roles }}" --skip-tags "sanity_check,settings" --extra-vars '{"continuous_integration":true}' -v
